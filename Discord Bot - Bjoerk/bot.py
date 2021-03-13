@@ -11,7 +11,7 @@ load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-client = commands.Bot(command_prefix='cum')
+client = commands.Bot(command_prefix='#')
 
 @client.event
 async def on_ready():
@@ -20,6 +20,38 @@ async def on_ready():
         print(
             f'{guild.name}(id: {guild.id})'
         )
+
+@client.command(name="prv")
+async def listUsers(message):
+    if message.author == client.user:
+        return
+    channel = client.get_channel(811134776492818493)
+    members = channel.members
+    for member in members:
+        #print(member.id)
+        username = await client.fetch_user(member.id)
+        await message.channel.send(f'{username}   ------    id: ({member.id})')
+        print(
+            f'{username}(id: {member.id})'
+        )
+    if not members:
+        await message.channel.send("I couldn't find any connected members.. ¯\_(ツ)_/¯")
+
+@client.command(name="pub")
+async def listUsers(message):
+    if message.author == client.user:
+        return
+    channel = client.get_channel(810436014828945422)
+    members = channel.members
+    for member in members:
+        #print(member.id)
+        username = await client.fetch_user(member.id)
+        await message.channel.send(f'{username}   ------   id: ({member.id})')
+        print(
+            f'{username}(id: {member.id})'
+        )
+    if not members:
+        await message.channel.send("I couldn't find any connected members.. ¯\_(ツ)_/¯")
 
 @client.command(name='99')
 async def bn99(message):
@@ -48,9 +80,20 @@ async def joinVC(ctx):
 async def leaveVC(ctx):
     await ctx.voice_client.disconnect()
 
-@client.command(name="spotify")
-async def playSpotify(ctx):
-    vc = await ctx.author.voice.channel.connect()
-    vc.play(discord.FFmpegAudio(source='dont'))
-    
+
+
+
+@client.event
+async def on_voice_state_update(member, before, after):
+    if before.channel is None and after.channel is not None:
+        print(f'({member}) Has Joined Channel: ({after.channel.name}) On Server: ({member.guild})')
+
+    if before.channel is not None and after.channel is None:
+        print(f'({member}) Has Left Channel: ({before.channel.name}) On Server: ({member.guild})')
+
+
+
+
+
+
 client.run(TOKEN)

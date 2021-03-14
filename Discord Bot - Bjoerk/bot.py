@@ -6,10 +6,13 @@ import json
 from datetime import timedelta
 from datetime import datetime
 import csv
-import discord
 import random
+from discord import Permissions
+from discord import role
 from discord.ext import commands
+from discord.utils import get
 from dotenv import load_dotenv
+import discord
 
 load_dotenv()
 
@@ -83,8 +86,6 @@ async def joinVC(ctx):
 @client.command(name='die')
 async def leaveVC(ctx):
     await ctx.voice_client.disconnect()
-
-
 
 
 @client.event

@@ -2,6 +2,7 @@
 import os
 import sys
 import json
+import datetime
 from datetime import datetime
 import csv
 import discord
@@ -103,17 +104,20 @@ async def on_voice_state_update(member, before, after):
         with open(f'{member}.txt', 'r') as fo:
             oldDat = fo.read()
         with open(f'{member}Time.txt', 'r') as fot:
-            timeDatS = fot.read()
-            timeDat = datetime.fromtimestamp(timeDatS)
+            timeDatStr = fot.read()
+            #timeDat = datetime.strptime(timeDatStr, '%Y-%m-%d %H:%M:%S.%f')
+            timeDat = datetime.fromtimestamp(float(timeDatStr)).isoformat()
         with open(f'{member}TToltal.txt', 'r') as ttfd:
-            oldTtoltal = ttfd.read()
+            oldTTstr = ttfd.read()
+            oldTtoltal = datetime.fromtimestamp(float(oldTTstr)).isoformat()
         with open(f'{member}.csv', 'a') as fd:
             timeDif = now - timeDat
             newTtoltal = oldTtoltal + timeDif
             writer = csv.writer(fd)
             writer.writerow(oldDat, now, timeDif, newTtoltal)
         with open(f'{member}TToltal.txt', 'w') as tTfd:
-            tTfd.write(newTtoltal)
+            timestampToltal = datetime.timestamp(newTtoltal)
+            tTfd.write(timestampToltal)
 
 
 

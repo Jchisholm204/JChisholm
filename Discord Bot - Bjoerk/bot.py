@@ -2,7 +2,7 @@
 import os
 import sys
 import json
-import datetime
+from datetime import timedelta
 from datetime import datetime
 import csv
 import discord
@@ -107,10 +107,10 @@ async def on_voice_state_update(member, before, after):
         
         with open(f'{member}Ttime.txt', "r") as tTime:
             tmpTdat = tTime.read()
-            tTime = datetime.fromtimestamp(float(tmpTdat))
+            TTime = timedelta(seconds=float(tmpTdat))
 
         timeDif = now - joinTime
-        toltalTtime = tTime + timeDif
+        toltalTtime = TTime + timeDif
         print(toltalTtime)
 
         with open(f'{member}.csv', 'a') as mbrcsv:
@@ -118,8 +118,7 @@ async def on_voice_state_update(member, before, after):
             writer.writerow([joinTime, now, timeDif, toltalTtime])
         
         with open(f'{member}Ttime.txt', 'w') as ntTime:
-            print(toltalTtime)
-            tstToltal = datetime.timestamp(toltalTtime)
+            tstToltal = toltalTtime.total_seconds()
             print(tstToltal)
             ntTime.write(str(tstToltal))
 

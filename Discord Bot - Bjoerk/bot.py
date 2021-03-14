@@ -93,33 +93,41 @@ async def on_voice_state_update(member, before, after):
 
     if before.channel is None and after.channel is not None:
         print(f'({member}) Has Joined Channel: ({after.channel.name}) On Server: ({member.guild}) At: ({now})')
-        with open(f'{member}.txt', 'w') as fd:
-            fd.write(f'Server: {member.guild}, Channel: {after.channel.name}, Joined:{now}')
-        with open(f'{member}Time.txt', 'w') as fnt:
-            fnt.write(str(timestamp))
-
+        with open(f'{member}TempDat.txt', 'w') as tmpDat:
+            #tmpDatArray = [now, member, member.guild, after.channel.name]
+            tmpDat.write(str(timestamp))
+        
     if before.channel is not None and after.channel is None:
         print(f'({member}) Has Left Channel: ({before.channel.name}) On Server: ({member.guild}) At: ({now})')
 
-        with open(f'{member}.txt', 'r') as fo:
-            oldDat = fo.read()
-        with open(f'{member}Time.txt', 'r') as fot:
-            timeDatStr = fot.read()
-            #timeDat = datetime.strptime(timeDatStr, '%Y-%m-%d %H:%M:%S.%f')
-            timeDat = datetime.fromtimestamp(float(timeDatStr)).isoformat()
-        with open(f'{member}TToltal.txt', 'r') as ttfd:
-            oldTTstr = ttfd.read()
-            oldTtoltal = datetime.fromtimestamp(float(oldTTstr)).isoformat()
-        with open(f'{member}.csv', 'a') as fd:
-            timeDif = now - timeDat
-            newTtoltal = oldTtoltal + timeDif
-            writer = csv.writer(fd)
-            writer.writerow(oldDat, now, timeDif, newTtoltal)
-        with open(f'{member}TToltal.txt', 'w') as tTfd:
-            timestampToltal = datetime.timestamp(newTtoltal)
-            tTfd.write(timestampToltal)
+        with open(f'{member}TempDat.txt', 'r') as tmpDat:
+            tmpDat = tmpDat.read()
+            joinTime = datetime.fromtimestamp(float(tmpDat))
+            #joinTime = datetime.strftime(joinTimeStr, "%Y-%m-%d %H:%M:%S.%f")
+        
+        with open(f'{member}Ttime.txt', "r") as tTime:
+            tmpTdat = tTime.read()
+            tTime = datetime.fromtimestamp(float(tmpTdat))
+
+        timeDif = now - joinTime
+        toltalTtime = tTime + timeDif
+        print(toltalTtime)
+
+        with open(f'{member}.csv', 'a') as mbrcsv:
+            writer = csv.writer(mbrcsv)
+            writer.writerow([joinTime, now, timeDif, toltalTtime])
+        
+        with open(f'{member}Ttime.txt', 'w') as ntTime:
+            print(toltalTtime)
+            tstToltal = datetime.timestamp(toltalTtime)
+            print(tstToltal)
+            ntTime.write(str(tstToltal))
 
 
+
+
+        
+        
 
 
 

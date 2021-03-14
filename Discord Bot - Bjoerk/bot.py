@@ -1,5 +1,6 @@
 # bot.py
 import os
+import os.path
 import sys
 import json
 from datetime import timedelta
@@ -91,21 +92,32 @@ async def on_voice_state_update(member, before, after):
     now = datetime.now()
     timestamp = datetime.timestamp(now)
 
+    msrPath = os.getcwd()
+    mbrPath = f"{msrPath}/{member}/"
+    mbrPath_exists = os.path.exists(mbrPath)
+    if mbrPath_exists is not True:
+        os.mkdir(mbrPath)
+
     if before.channel is None and after.channel is not None:
         print(f'({member}) Has Joined Channel: ({after.channel.name}) On Server: ({member.guild}) At: ({now})')
-        with open(f'{member}TempDat.txt', 'w') as tmpDat:
+        with open(f"{msrPath}/{member}/"+"TempDat.txt", 'w') as tmpDat:
             #tmpDatArray = [now, member, member.guild, after.channel.name]
             tmpDat.write(str(timestamp))
-        
+
     if before.channel is not None and after.channel is None:
         print(f'({member}) Has Left Channel: ({before.channel.name}) On Server: ({member.guild}) At: ({now})')
 
-        with open(f'{member}TempDat.txt', 'r') as tmpDat:
+        with open(f"{msrPath}/{member}/"+'TempDat.txt', 'r') as tmpDat:
             tmpDat = tmpDat.read()
             joinTime = datetime.fromtimestamp(float(tmpDat))
             #joinTime = datetime.strftime(joinTimeStr, "%Y-%m-%d %H:%M:%S.%f")
         
-        with open(f'{member}Ttime.txt', "r") as tTime:
+        memberTtime_exists = os.path.isfile(f"{msrPath}/{member}/"+'Ttime.txt')
+        if memberTtime_exists is not True:
+            with open(f"{msrPath}/{member}/"+'Ttime.txt', "w") as crtFile:
+                crtFile.write('0')
+            
+        with open(f"{msrPath}/{member}/"+'Ttime.txt', "r") as tTime:
             tmpTdat = tTime.read()
             TTime = timedelta(seconds=float(tmpTdat))
 
@@ -113,22 +125,14 @@ async def on_voice_state_update(member, before, after):
         toltalTtime = TTime + timeDif
         print(toltalTtime)
 
-        with open(f'{member}.csv', 'a') as mbrcsv:
+        with open(f"{msrPath}/{member}/"+'stats.csv', 'a') as mbrcsv:
             writer = csv.writer(mbrcsv)
             writer.writerow([joinTime, now, timeDif, toltalTtime])
         
-        with open(f'{member}Ttime.txt', 'w') as ntTime:
+        with open(f"{msrPath}/{member}/"+'Ttime.txt', 'w') as ntTime:
             tstToltal = toltalTtime.total_seconds()
             print(tstToltal)
             ntTime.write(str(tstToltal))
-
-
-
-
-        
-        
-
-
 
 
 client.run(TOKEN)

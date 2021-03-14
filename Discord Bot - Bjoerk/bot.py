@@ -2,6 +2,8 @@
 import os
 import sys
 import json
+from datetime import datetime
+import csv
 import discord
 import random
 from discord.ext import commands
@@ -85,11 +87,33 @@ async def leaveVC(ctx):
 
 @client.event
 async def on_voice_state_update(member, before, after):
+    now = datetime.now()
+    timestamp = datetime.timestamp(now)
+
     if before.channel is None and after.channel is not None:
-        print(f'({member}) Has Joined Channel: ({after.channel.name}) On Server: ({member.guild})')
+        print(f'({member}) Has Joined Channel: ({after.channel.name}) On Server: ({member.guild}) At: ({now})')
+        with open(f'{member}.txt', 'w') as fd:
+            fd.write(f'Server: {member.guild}, Channel: {after.channel.name}, Joined:{now}')
+        with open(f'{member}Time.txt', 'w') as fnt:
+            fnt.write(str(timestamp))
 
     if before.channel is not None and after.channel is None:
-        print(f'({member}) Has Left Channel: ({before.channel.name}) On Server: ({member.guild})')
+        print(f'({member}) Has Left Channel: ({before.channel.name}) On Server: ({member.guild}) At: ({now})')
+
+        with open(f'{member}.txt', 'r') as fo:
+            oldDat = fo.read()
+        with open(f'{member}Time.txt', 'r') as fot:
+            timeDatS = fot.read()
+            timeDat = datetime.fromtimestamp(timeDatS)
+        with open(f'{member}TToltal.txt', 'r') as ttfd:
+            oldTtoltal = ttfd.read()
+        with open(f'{member}.csv', 'a') as fd:
+            timeDif = now - timeDat
+            newTtoltal = oldTtoltal + timeDif
+            writer = csv.writer(fd)
+            writer.writerow(oldDat, now, timeDif, newTtoltal)
+        with open(f'{member}TToltal.txt', 'w') as tTfd:
+            tTfd.write(newTtoltal)
 
 
 

@@ -87,6 +87,14 @@ async def joinVC(ctx):
 async def leaveVC(ctx):
     await ctx.voice_client.disconnect()
 
+@client.event
+async def on_message(message):
+    if message.author is client.user:
+        return
+    if 'what is my height' in message.content:
+        rnNumber = ((random.random() / random.random()) *180)
+        await message.channel.send(f'Your height is not {rnNumber} cm')
+
 
 @client.event
 async def on_voice_state_update(member, before, after):

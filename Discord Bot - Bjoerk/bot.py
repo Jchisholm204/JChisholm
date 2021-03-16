@@ -89,11 +89,15 @@ async def leaveVC(ctx):
 
 @client.event
 async def on_message(message):
-    if message.author is client.user:
+    if message.author.id is client.user.id:
         return
+    
     if 'what is my height' in message.content:
         rnNumber = ((random.random() / random.random()) *180)
         await message.channel.send(f'Your height is not {rnNumber} cm')
+    
+    if 'bjoerk' in message.content:
+        await message.reply('I have been summoned, Explain.')
 
 
 @client.event

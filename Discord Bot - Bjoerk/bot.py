@@ -87,23 +87,35 @@ async def joinVC(ctx):
 async def leaveVC(ctx):
     await ctx.voice_client.disconnect()
 
-@client.event
-async def on_message(message):
-    if message.author.id is client.user.id:
+
+@client.command(name="time")
+async def checktime(ctx, member: discord.Member=None):
+    wkdir = os.getcwd()
+    if member is None:
+        usrDir = f"{wkdir}/{ctx.author}/"
+        usrName = 'Your'
+    else:
+        usrDir = f"{wkdir}/{member}/"
+        usrName = f"{member}'s"
+    usrDir_exists = os.path.exists(usrDir)
+
+    if usrDir_exists is not True:
+        await ctx.channel.send("Im sorry, but the records for that user are not avalible at this time,")
+        await ctx.channel.send("you may want to try using their full discord name including numbers,")
+        await ctx.channel.send("kind of like this OGdiscordUser#0420")
         return
-    
-    if 'what is my height' in message.content:
-        rnNumber = ((random.random() / random.random()) *180)
-        await message.channel.send(f'Your height is not {rnNumber} cm')
-    
-    if 'bjoerk' in message.content:
-        await message.reply('I have been summoned, Explain.')
+    with open(f'{usrDir}/Ttime.txt', 'r') as fpT:
+        usrTseconds = fpT.read()
+        usrTtime = timedelta(seconds=float(usrTseconds))
+        await ctx.channel.send(f"{usrName} toltal time is {usrTtime}")
 
 
 @client.event
 async def on_voice_state_update(member, before, after):
     now = datetime.now()
     timestamp = datetime.timestamp(now)
+    
+    bjoerkChannel = client.get_channel(821473151342870548)
 
     msrPath = os.getcwd()
     mbrPath = f"{msrPath}/{member}/"
@@ -113,12 +125,16 @@ async def on_voice_state_update(member, before, after):
 
     if before.channel is None and after.channel is not None:
         print(f'({member}) Has Joined Channel: ({after.channel.name}) On Server: ({member.guild}) At: ({now})')
+        await bjoerkChannel.send(f'"{member}" Has Joined Channel: "{after.channel.name}" On Server: "{member.guild}" At: {now}')
+        await bjoerkChannel.send("-----   ¯\_(ツ)_/¯  -----")
         with open(f"{msrPath}/{member}/"+"TempDat.txt", 'w') as tmpDat:
             #tmpDatArray = [now, member, member.guild, after.channel.name]
             tmpDat.write(str(timestamp))
 
     if before.channel is not None and after.channel is None:
         print(f'({member}) Has Left Channel: ({before.channel.name}) On Server: ({member.guild}) At: ({now})')
+        await bjoerkChannel.send(f'"{member}" Has Left Channel: "{before.channel.name}" On Server: "{member.guild}" At: {now}')
+        
 
         with open(f"{msrPath}/{member}/"+'TempDat.txt', 'r') as tmpDat:
             tmpDat = tmpDat.read()
@@ -137,6 +153,8 @@ async def on_voice_state_update(member, before, after):
         timeDif = now - joinTime
         toltalTtime = TTime + timeDif
         print(toltalTtime)
+        await bjoerkChannel.send(f"{member}'s Toltal Time is {toltalTtime}")
+        await bjoerkChannel.send(" -----   ¯\_(ツ)_/¯  -----")
 
         with open(f"{msrPath}/{member}/"+'stats.csv', 'a') as mbrcsv:
             writer = csv.writer(mbrcsv)

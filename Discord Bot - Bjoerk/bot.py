@@ -89,7 +89,7 @@ async def leaveVC(ctx):
 
 
 @client.command(name="time")
-async def checktime(ctx, member: discord.Member=None):
+async def checktime(ctx, member=None):
     wkdir = os.getcwd()
     if member is None:
         usrDir = f"{wkdir}/{ctx.author}/"

@@ -109,13 +109,29 @@ async def checktime(ctx, member=None):
         usrTtime = timedelta(seconds=float(usrTseconds))
         await ctx.channel.send(f"{usrName} toltal time is {usrTtime}")
 
+@client.command(name="when")
+async def tenDaysMarker(ctx, member=None):
+    wkdir = os.getcwd()
+    if member is None:
+        timFD = f"{wkdir}/{ctx.author}/10Days.txt"
+        asker = f"you are"
+    else:
+        timFD = f"{wkdir}/{member}/10Days.txt"
+        asker = f"{member} is"
+    timFD_exists = os.path.exists(timFD)
+    if timFD_exists is not True:
+        await ctx.channel.send(f"It would appear that {asker} yet to hit the 10 day mark")
+        return
+    with open(f'{timFD}', 'r') as timeF:
+        tenDayMarker = timeF.read()
+        await ctx.channel.send(f"That user surpassed ten days on {tenDayMarker}")
 
 @client.event
 async def on_voice_state_update(member, before, after):
     now = datetime.now()
     timestamp = datetime.timestamp(now)
     
-    bjoerkChannel = client.get_channel(821473151342870548)
+    bjoerkChannel = client.get_channel(821294119724253229)
 
     msrPath = os.getcwd()
     mbrPath = f"{msrPath}/{member}/"
@@ -153,7 +169,19 @@ async def on_voice_state_update(member, before, after):
         timeDif = now - joinTime
         toltalTtime = TTime + timeDif
         print(toltalTtime)
-        await bjoerkChannel.send(f"{member}'s Toltal Time is {toltalTtime}")
+
+        mbr10Days_true = os.path.exists(f"{msrPath}/{member}/10Days.txt")
+        tentime = timedelta(days=10)
+
+        if mbr10Days_true is not True and toltalTtime >= tentime:
+            with open(f"{msrPath}/{member}/"+'10Days.txt', 'w') as tenDays:
+                print(f"{member} Has Surpassed 10 Days")
+                tenDays.write(str(now))
+                await bjoerkChannel.send(f"@everyone {member} has just surpassed Ten whole days on discord! Congratulations on not having a life.")
+                await bjoerkChannel.send(f"{member}'s Toltal Time is now {toltalTtime}")
+        else:
+            await bjoerkChannel.send(f"{member}'s Toltal Time is {toltalTtime}")
+        
         await bjoerkChannel.send(" -----   ¯\_(ツ)_/¯  -----")
 
         with open(f"{msrPath}/{member}/"+'stats.csv', 'a') as mbrcsv:

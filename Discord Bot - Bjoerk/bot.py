@@ -22,6 +22,7 @@ client = commands.Bot(command_prefix='#')
 
 @client.event
 async def on_ready():
+    await client.change_presence(activity=discord.Game(name="GTA IRL"))
     print(f'{client.user} is connected to the following guilds:')
     for guild in client.guilds:
         print(
@@ -109,7 +110,7 @@ async def checktime(ctx, member=None):
         usrTtime = timedelta(seconds=float(usrTseconds))
         await ctx.channel.send(f"{usrName} toltal time is {usrTtime}")
 
-@client.command(name="when")
+@client.command(name="10")
 async def tenDaysMarker(ctx, member=None):
     wkdir = os.getcwd()
     if member is None:
@@ -126,12 +127,21 @@ async def tenDaysMarker(ctx, member=None):
         tenDayMarker = timeF.read()
         await ctx.channel.send(f"That user surpassed ten days on {tenDayMarker}")
 
+@client.command(name="records")
+async def release_records(ctx, member=None):
+    wkdir = os.getcwd()
+    if member is None:
+        statsFdir = f"{wkdir}/{ctx.author}/stats.csv"
+    else:
+        statsFdir = f"{wkdir}/{member}/stats.csv"
+    await ctx.channel.send(file=discord.File(statsFdir))
+
 @client.event
 async def on_voice_state_update(member, before, after):
     now = datetime.now()
     timestamp = datetime.timestamp(now)
     
-    bjoerkChannel = client.get_channel(821294119724253229)
+    bjoerkChannel = client.get_channel(821473151342870548)
 
     msrPath = os.getcwd()
     mbrPath = f"{msrPath}/{member}/"
@@ -178,7 +188,7 @@ async def on_voice_state_update(member, before, after):
                 print(f"{member} Has Surpassed 10 Days")
                 tenDays.write(str(now))
                 await bjoerkChannel.send(f"@everyone {member} has just surpassed Ten whole days on discord! Congratulations on not having a life.")
-                await bjoerkChannel.send(f"{member}'s Toltal Time is now {toltalTtime}")
+                await bjoerkChannel.send(f"@everyone {member}'s Toltal Time is now {toltalTtime}")
         else:
             await bjoerkChannel.send(f"{member}'s Toltal Time is {toltalTtime}")
         

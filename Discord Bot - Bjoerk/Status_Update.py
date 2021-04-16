@@ -2,11 +2,6 @@
 import os
 import os.path
 import sys
-import json
-from datetime import timedelta
-from datetime import datetime
-import csv
-import random
 from discord import Permissions
 from discord import role
 from discord.ext import commands
@@ -22,9 +17,9 @@ client = commands.Bot(command_prefix='#')
 
 @client.event
 async def on_ready():
-    bot_status = discord.Status.offline
+    bot_status = discord.Status.idle
     #await client.change_presence(activity=discord.Game(name="GTA IRL"))
-    await client.change_presence(activity=discord.Activity(status=bot_status, type=discord.ActivityType.watching, name ='the hours pass'))
+    await client.change_presence(status=bot_status, activity=discord.Activity(type=discord.ActivityType.watching, name ='The Hours Pass'))
     print(f'{client.user} is connected to the following guilds:')
     for guild in client.guilds:
         print(

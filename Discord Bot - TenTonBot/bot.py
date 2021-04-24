@@ -46,7 +46,7 @@ async def nextQue(ctx):
         team2A = discord.utils.get(ctx.guild.roles, name=team2)
         team3A = discord.utils.get(ctx.guild.roles, name=team3)
         team4A = discord.utils.get(ctx.guild.roles, name=team4)
-        await updootChnl.send(f'Qual: {Arow + 1} ¯\_(ツ)_/¯ Red: {team1A.mention} {team2A.mention} Blue: {team3A.mention} {team4A.mention}')
+        await updootChnl.send(f'Qual: {Arow} ¯\_(ツ)_/¯ Red: {team1A.mention} {team2A.mention} Blue: {team3A.mention} {team4A.mention}')
 
     with open(f'{wkDir}/Lrow.txt', "w") as LastRow_file:
         LastRow += 1
@@ -68,7 +68,17 @@ async def reset_list(ctx, row):
         return
     with open(f'{wkDir}/Lrow.txt', "w") as LastRow_file:
         LastRow_file.write(str(row))   
-        await ctx.channel.send(f'Row Number has been set to {row}')
+        await ctx.channel.send(f'Row Number has been set to match {row}')
+
+@client.command(name='setmatch')
+async def reset_list(ctx, row):
+    okRole = team4A = discord.utils.get(ctx.guild.roles, name="Field Tech")
+    if okRole not in ctx.author.roles:
+        return
+        row -= 1
+    with open(f'{wkDir}/Lrow.txt', "w") as LastRow_file:
+        LastRow_file.write(str(row))   
+        await ctx.channel.send(f'The Next match will be match {row}')
 
 @client.command(name='hi')
 async def hi(ctx):

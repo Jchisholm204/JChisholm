@@ -18,13 +18,14 @@ client = commands.Bot(command_prefix='!')
 
 @client.event
 async def on_ready():
-    await client.change_presence(activity=discord.Game(name="GTA IRL"))
+    await client.change_presence(activity=discord.Game(name="VEX Change Up"))
     print(f'{client.user} is connected to the following guilds:')
     for guild in client.guilds:
         print(
             f'{guild.name}(id: {guild.id})'
         )
 wkDir = os.getcwd()
+
 @client.command(name='next')
 async def nextQue(ctx):
     okRole = team4A = discord.utils.get(ctx.guild.roles, name="Field Tech")
@@ -83,4 +84,9 @@ async def reset_list(ctx, row):
 @client.command(name='hi')
 async def hi(ctx):
     await ctx.channel.send(f"hi {ctx.author.mention}")
+
+@client.command(name='send')
+async def skeet(ctx):
+    updootChnl = client.get_channel(835381836762841119)
+    await updootChnl.send('Thanks @everyone and especially Mr Ablett, Dr. Chugani and Ms. Wilson for a great tournament today')
 client.run(TOKEN)

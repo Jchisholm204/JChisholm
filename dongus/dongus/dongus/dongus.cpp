@@ -10,7 +10,7 @@ int main() {
     getline (cin, bruh);
     cout << "Looking for Error: " << bruh;
     Sleep(5000);
-    cout << "\nCould not find Error\n";
+    cout << "\nCould not locate Error\n";
 };
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

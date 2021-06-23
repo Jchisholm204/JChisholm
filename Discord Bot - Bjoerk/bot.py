@@ -18,6 +18,7 @@ from discord.ext import tasks
 from discord.utils import get
 from dotenv import load_dotenv
 import discord
+from scoreBoard import scoreboard as timeSorter
 
 load_dotenv()
 
@@ -55,27 +56,7 @@ async def bn99(message):
 
 @client.command(name='tscore')
 async def TimeScoreBoard(ctx):
-    input_path = f"{os.getcwd()}"  # type: str
-    user_paths = os.listdir(input_path)
-
-    userNames = []
-    userTimes = []
-
-    for path in user_paths:
-        timePath = f"{os.getcwd()}/{path}/Ttime.txt"
-        if os.path.exists(timePath) == True:   
-            with open(f'{path}/Ttime.txt', 'r') as fpT:
-                usrTseconds = fpT.read()
-                userTimes.append(float(usrTseconds))
-                userNames.append((path))
-
-    n=len(userTimes)
-    for i in range(0, n):
-        for j in range(0, n-i-1):#-i
-            if userTimes[j] < userTimes[j+1]:
-                userTimes[j], userTimes[j+1] = userTimes[j+1], userTimes[j]
-                userNames[j], userNames[j+1] = userNames[j+1], userNames[j]
-    await ctx.channel.send(f"HIGHSCORES:\n1. {userNames[0]}\t-\t{timedelta(seconds=float(userTimes[0]))}\n2. {userNames[1]}\t-\t{timedelta(seconds=float(userTimes[1]))}\n3. {userNames[2]}\t-\t{timedelta(seconds=float(userTimes[2]))}\n4. {userNames[3]}\t-\t{timedelta(seconds=float(userTimes[3]))}")
+    await ctx.channel.send(timeSorter())
 
 
 @client.command(name='status')

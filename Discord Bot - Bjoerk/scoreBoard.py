@@ -11,12 +11,12 @@ from datetime import datetime
 import csv
 
 #returns usrNames, usrTimes
-async def scoreboard():
+def scoreboard():
     input_path = f"{os.getcwd()}"  # type: str
     user_paths = os.listdir(input_path)
 
-    usrNames = []
     usrTimes = []
+    usrNames = []
 
     for path in user_paths:
         timePath = f"{os.getcwd()}/{path}/Ttime.txt"
@@ -33,5 +33,5 @@ async def scoreboard():
                 usrTimes[j], usrTimes[j+1] = usrTimes[j+1], usrTimes[j]
                 usrNames[j], usrNames[j+1] = usrNames[j+1], usrNames[j]
 
-    return usrNames, usrTimes
+    return (f"HIGHSCORES:\n1. {usrNames[0]}\t-\t{timedelta(seconds=float(usrTimes[0]))}\n2. {usrNames[1]}\t-\t{timedelta(seconds=float(usrTimes[1]))}\n3. {usrNames[2]}\t-\t{timedelta(seconds=float(usrTimes[2]))}\n4. {usrNames[3]}\t-\t{timedelta(seconds=float(usrTimes[3]))}")
 #usrTtime = timedelta(seconds=float(usrTseconds))

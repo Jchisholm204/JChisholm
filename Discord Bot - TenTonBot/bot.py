@@ -28,7 +28,7 @@ wkDir = os.getcwd()
 
 @client.command(name='next')
 async def nextQue(ctx):
-    okRole = team4A = discord.utils.get(ctx.guild.roles, name="Field Tech")
+    okRole  = discord.utils.get(ctx.guild.roles, name="Field Tech")
     if okRole not in ctx.author.roles:
         return
     with open(f'{wkDir}/Lrow.txt', "r") as LastRow_file:

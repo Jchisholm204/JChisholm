@@ -1,4 +1,8 @@
 # bot.py
+# RICKLE PICK - Discord Bot
+# Authors: jchisholm204
+# Date: Mar 10, 2021
+
 import os
 import os.path
 import sys
@@ -10,6 +14,7 @@ import random
 from discord import Permissions
 from discord import role
 from discord.ext import commands
+from discord.ext import tasks
 from discord.utils import get
 from dotenv import load_dotenv
 import discord
@@ -22,44 +27,14 @@ client = commands.Bot(command_prefix='#')
 
 @client.event
 async def on_ready():
-    await client.change_presence(activity=discord.Game(name="GTA IRL"))
+    #await client.change_presence(activity=discord.Game(name="GTA IRL"))
+    await  client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Rick and Morty"))
     print(f'{client.user} is connected to the following guilds:')
     for guild in client.guilds:
         print(
             f'{guild.name}(id: {guild.id})'
         )
 
-@client.command(name="prv")
-async def listUsers(message):
-    if message.author == client.user:
-        return
-    channel = client.get_channel(811134776492818493)
-    members = channel.members
-    for member in members:
-        #print(member.id)
-        username = await client.fetch_user(member.id)
-        await message.channel.send(f'{username}   ------    id: ({member.id})')
-        print(
-            f'{username}(id: {member.id})'
-        )
-    if not members:
-        await message.channel.send("I couldn't find any connected members.. ¯\_(ツ)_/¯")
-
-@client.command(name="pub")
-async def listUsers(message):
-    if message.author == client.user:
-        return
-    channel = client.get_channel(810436014828945422)
-    members = channel.members
-    for member in members:
-        #print(member.id)
-        username = await client.fetch_user(member.id)
-        await message.channel.send(f'{username}   ------   id: ({member.id})')
-        print(
-            f'{username}(id: {member.id})'
-        )
-    if not members:
-        await message.channel.send("I couldn't find any connected members.. ¯\_(ツ)_/¯")
 
 @client.command(name='99')
 async def bn99(message):
@@ -78,7 +53,37 @@ async def bn99(message):
     response = random.choice(brooklyn_99_quotes)
     await message.channel.send(response)
 
+@client.command(name='tscore')
+async def TimeScoreBoard(ctx):
+    input_path = f"{os.getcwd()}"  # type: str
+    user_paths = os.listdir(input_path)
 
+    userNames = []
+    userTimes = []
+
+    for path in user_paths:
+        timePath = f"{os.getcwd()}/{path}/Ttime.txt"
+        if os.path.exists(timePath) == True:   
+            with open(f'{path}/Ttime.txt', 'r') as fpT:
+                usrTseconds = fpT.read()
+                userTimes.append(float(usrTseconds))
+                userNames.append((path))
+
+    n=len(userTimes)
+    for i in range(0, n):
+        for j in range(0, n-i-1):#-i
+            if userTimes[j] < userTimes[j+1]:
+                userTimes[j], userTimes[j+1] = userTimes[j+1], userTimes[j]
+                userNames[j], userNames[j+1] = userNames[j+1], userNames[j]
+    await ctx.channel.send(f"HIGHSCORES:\n1. {userNames[0]}\t-\t{timedelta(seconds=float(userTimes[0]))}\n2. {userNames[1]}\t-\t{timedelta(seconds=float(userTimes[1]))}\n3. {userNames[2]}\t-\t{timedelta(seconds=float(userTimes[2]))}\n4. {userNames[3]}\t-\t{timedelta(seconds=float(userTimes[3]))}")
+
+
+@client.command(name='status')
+async def status(ctx):
+    folder_count = 0  # type: int
+    input_path = f"{os.getcwd()}"  # type: str
+    folder_count = len(os.listdir(input_path))
+    await ctx.channel.send(f'```ini\nCLIENT STATUS:      [ONLINE]\nTIME STATUS:        [TRACKING]\nTRACKED MEMBERS:    {folder_count}```')
 @client.command(name='join')
 async def joinVC(ctx):
     channel = ctx.author.voice.channel
@@ -93,7 +98,7 @@ async def leaveVC(ctx):
 async def checktime(ctx, member=None):
     wkdir = os.getcwd()
     if member is None:
-        usrDir = f"{wkdir}/{ctx.author}/"
+        usrDir = f"{wkdir}/{ctx.author.discriminator}/"
         usrName = 'Your'
     else:
         usrDir = f"{wkdir}/{member}/"
@@ -102,19 +107,18 @@ async def checktime(ctx, member=None):
 
     if usrDir_exists is not True:
         await ctx.channel.send("Im sorry, but the records for that user are not avalible at this time,")
-        await ctx.channel.send("you may want to try using their full discord name including numbers,")
-        await ctx.channel.send("kind of like this OGdiscordUser#0420")
+        await ctx.channel.send("To access records, please use the numbers after the # in your name.\n ThankYou")
         return
     with open(f'{usrDir}/Ttime.txt', 'r') as fpT:
         usrTseconds = fpT.read()
         usrTtime = timedelta(seconds=float(usrTseconds))
-        await ctx.channel.send(f"{usrName} toltal time is {usrTtime}")
+        await ctx.channel.send(f"{usrName} total time is {usrTtime}")
 
 @client.command(name="10")
 async def tenDaysMarker(ctx, member=None):
     wkdir = os.getcwd()
     if member is None:
-        timFD = f"{wkdir}/{ctx.author}/10Days.txt"
+        timFD = f"{wkdir}/{ctx.author.discriminator}/10Days.txt"
         asker = f"you are"
     else:
         timFD = f"{wkdir}/{member}/10Days.txt"
@@ -129,50 +133,56 @@ async def tenDaysMarker(ctx, member=None):
 
 @client.command(name="records")
 async def release_records(ctx, member=None):
-    wkdir = os.getcwd()
     if member is None:
-        statsFdir = f"{wkdir}/{ctx.author}/stats.csv"
-    else:
-        statsFdir = f"{wkdir}/{member}/stats.csv"
+        member  = ctx.author.discriminator
+    wkdir = os.getcwd()
+    mbr = member
+    statsFdir = f"{wkdir}/{mbr}/stats.csv"
     await ctx.channel.send(file=discord.File(statsFdir))
 
 @client.event
 async def on_voice_state_update(member, before, after):
     now = datetime.now()
+    timeNow = datetime.strftime(now, '%m/%d/%Y %H:%M:%S')
+    mbr = member.discriminator
     timestamp = datetime.timestamp(now)
     
-    bjoerkChannel = client.get_channel(821473151342870548)
+    bjoerkChannel = client.get_channel(835204702924046346) #821473151342870548
+    brianChannel = client.get_channel(847143897448316948)
 
     msrPath = os.getcwd()
-    mbrPath = f"{msrPath}/{member}/"
+    mbrPath = f"{msrPath}/{mbr}/"
     mbrPath_exists = os.path.exists(mbrPath)
     if mbrPath_exists is not True:
         os.mkdir(mbrPath)
 
     if before.channel is None and after.channel is not None:
-        print(f'({member}) Has Joined Channel: ({after.channel.name}) On Server: ({member.guild}) At: ({now})')
-        await bjoerkChannel.send(f'"{member}" Has Joined Channel: "{after.channel.name}" On Server: "{member.guild}" At: {now}')
+        print(f'({mbr}) Has Joined Channel: ({after.channel.name}) On Server: ({member.guild}) At: ({timeNow})')
+        await bjoerkChannel.send(f'"{member}" Has Joined Channel: "{after.channel.name}" On Server: "{member.guild}" At: {timeNow}')
+        await brianChannel.send(f'"{member}" Has Joined Channel: "{after.channel.name}" On Server: "{member.guild}" At: {timeNow}')
         await bjoerkChannel.send("-----   ¯\_(ツ)_/¯  -----")
-        with open(f"{msrPath}/{member}/"+"TempDat.txt", 'w') as tmpDat:
+        await brianChannel.send("-----   ¯\_(ツ)_/¯  -----")
+        with open(f"{msrPath}/{mbr}/"+"TempDat.txt", 'w') as tmpDat:
             #tmpDatArray = [now, member, member.guild, after.channel.name]
             tmpDat.write(str(timestamp))
 
     if before.channel is not None and after.channel is None:
-        print(f'({member}) Has Left Channel: ({before.channel.name}) On Server: ({member.guild}) At: ({now})')
-        await bjoerkChannel.send(f'"{member}" Has Left Channel: "{before.channel.name}" On Server: "{member.guild}" At: {now}')
+        print(f'({member}) Has Left Channel: ({before.channel.name}) On Server: ({member.guild}) At: ({timeNow})')
+        await bjoerkChannel.send(f'"{member}" Has Left Channel: "{before.channel.name}" On Server: "{member.guild}" At: {timeNow}')
+        await brianChannel.send(f'"{member}" Has Left Channel: "{before.channel.name}" On Server: "{member.guild}" At: {timeNow}')
         
 
-        with open(f"{msrPath}/{member}/"+'TempDat.txt', 'r') as tmpDat:
+        with open(f"{msrPath}/{mbr}/"+'TempDat.txt', 'r') as tmpDat:
             tmpDat = tmpDat.read()
             joinTime = datetime.fromtimestamp(float(tmpDat))
             #joinTime = datetime.strftime(joinTimeStr, "%Y-%m-%d %H:%M:%S.%f")
         
-        memberTtime_exists = os.path.isfile(f"{msrPath}/{member}/"+'Ttime.txt')
+        memberTtime_exists = os.path.isfile(f"{msrPath}/{mbr}/"+'Ttime.txt')
         if memberTtime_exists is not True:
-            with open(f"{msrPath}/{member}/"+'Ttime.txt', "w") as crtFile:
+            with open(f"{msrPath}/{mbr}/"+'Ttime.txt', "w") as crtFile:
                 crtFile.write('0')
             
-        with open(f"{msrPath}/{member}/"+'Ttime.txt', "r") as tTime:
+        with open(f"{msrPath}/{mbr}/"+'Ttime.txt', "r") as tTime:
             tmpTdat = tTime.read()
             TTime = timedelta(seconds=float(tmpTdat))
 
@@ -180,25 +190,26 @@ async def on_voice_state_update(member, before, after):
         toltalTtime = TTime + timeDif
         print(toltalTtime)
 
-        mbr10Days_true = os.path.exists(f"{msrPath}/{member}/10Days.txt")
+        mbr10Days_true = os.path.exists(f"{msrPath}/{mbr}/10Days.txt")
         tentime = timedelta(days=10)
 
         if mbr10Days_true is not True and toltalTtime >= tentime:
-            with open(f"{msrPath}/{member}/"+'10Days.txt', 'w') as tenDays:
+            with open(f"{msrPath}/{mbr}/"+'10Days.txt', 'w') as tenDays:
                 print(f"{member} Has Surpassed 10 Days")
                 tenDays.write(str(now))
-                await bjoerkChannel.send(f"@everyone {member} has just surpassed Ten whole days on discord! Congratulations on not having a life.")
+                await bjoerkChannel.send(f"@everyone {member} has just surpassed Ten whole days on discord! What the fuck is wrong with you..?")
                 await bjoerkChannel.send(f"@everyone {member}'s Toltal Time is now {toltalTtime}")
         else:
-            await bjoerkChannel.send(f"{member}'s Toltal Time is {toltalTtime}")
+            await bjoerkChannel.send(f"{member}'s Total Time is {toltalTtime}")
         
         await bjoerkChannel.send(" -----   ¯\_(ツ)_/¯  -----")
+        await brianChannel.send(" -----   ¯\_(ツ)_/¯  -----")
 
-        with open(f"{msrPath}/{member}/"+'stats.csv', 'a') as mbrcsv:
+        with open(f"{msrPath}/{mbr}/"+'stats.csv', 'a') as mbrcsv:
             writer = csv.writer(mbrcsv)
             writer.writerow([joinTime, now, timeDif, toltalTtime])
         
-        with open(f"{msrPath}/{member}/"+'Ttime.txt', 'w') as ntTime:
+        with open(f"{msrPath}/{mbr}/"+'Ttime.txt', 'w') as ntTime:
             tstToltal = toltalTtime.total_seconds()
             print(tstToltal)
             ntTime.write(str(tstToltal))

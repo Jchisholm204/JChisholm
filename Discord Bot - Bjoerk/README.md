@@ -4,6 +4,7 @@ Along with these files, theres also a .env file containing the secret api keys u
 
 # UPDATE: Rickle Pick
 This is the update for the rickle pick rework.  In addtion to changing the bots name, a scoreboard function has been introduced, accessible through "#tscore" along with a massive folder structure rework.  All of the folders have been changed to use user descriminators, or the four numbers after a users name.  This allows users to change their name, without losing their tracked time.
+Lastly, the bot has also been modified to send its updates to two channels on two seperate servers, this is really jank at the moment and I am hopeful a better fix will be right around the corner.
 
 # UPDATE: Jun 23, 2021
 The purpose of this bot was to use the analytics in order to predict when people are most likley to join and leave channels on discord, after having this bot for a number of months, I think enough data has been collected to start this process.  

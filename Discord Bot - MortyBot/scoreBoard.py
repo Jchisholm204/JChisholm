@@ -39,4 +39,3 @@ def scoreboard():
         sbCSV.writerow(usrNames)
         sbCSV.writerow(usrTimes)
 #usrTtime = timedelta(seconds=float(usrTseconds))
-scoreboard()

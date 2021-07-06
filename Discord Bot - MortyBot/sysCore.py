@@ -32,10 +32,20 @@ async def on_ready():
     print(f'{client.user} is connected to the following guilds:')
     with open(f"{os.getcwd()}/SysData/online.txt") as online:
         online.write(datetime.timestamp(datetime.now()))
+    
+    startupPath = f"{os.getcwd()}/SysData/guilds.csv"
+    prevGuilds = list(csv.reader(open(startupPath)))
+
     for guild in client.guilds:
-        print(
-            f'{guild.name}(id: {guild.id})'
-        )
+        if sysHelper.inList(prevGuilds, guild) == None:
+            print(f"NEW GUILD DETECTED:\nNAME:{guild.name}\nID:{guild.id}")
+        else:
+            print(f"{guild.name}(id: {guild.id})")
+    
+    with open(startupPath, "w") as writeable:
+        startupCSV = csv.writer(writeable)
+        startupCSV.writerow(client.guilds)
+    
 
 
 @client.command(name='99')
@@ -47,6 +57,13 @@ async def testResponce(message):
 @client.command(name='tscore')
 async def TimeScoreBoard(ctx):
     await ctx.channel.send(timeSorter())
+
+@client.command(name='rank')
+async def rankChecker(ctx, member=None):
+    if member == None:
+        member = ctx.author
+    rank, usrTime = sysHelper.rankCheck(member)
+    await ctx.channel.send(f"Client:\t{member}\nRank:\t{rank}")
 
 
 @client.command(name='status')
@@ -99,8 +116,8 @@ async def on_voice_state_update(member, before, after):
 
     if before.channel is None and after.channel is not None:
         print(f'({mbr}) Has Joined Channel: ({after.channel.name}) On Server: ({member.guild}) At: ({timeNow})')
-        await bjoerkChannel.send(f'"{member}" Has Joined Channel: "{after.channel.name}" On Server: "{member.guild}" At: {timeNow}')
-        await brianChannel.send(f'"{member}" Has Joined Channel: "{after.channel.name}" On Server: "{member.guild}" At: {timeNow}')
+        await bjoerkChannel.send(f'"{member}" Has Joined Channel: "{after.channel.name}" On Server: "{member.guild}" At: {sysHelper.timeConverter(datetime.timestamp(datetime.now()))[-1]}')
+        await brianChannel.send(f'"{member}" Has Joined Channel: "{after.channel.name}" On Server: "{member.guild}" At: {sysHelper.timeConverter(datetime.timestamp(datetime.now()))[-1]}')
         await bjoerkChannel.send("-----   ¯\_(ツ)_/¯  -----")
         await brianChannel.send("-----   ¯\_(ツ)_/¯  -----")
         with open(f"{msrPath}/{mbr}/"+"TempDat.txt", 'w') as tmpDat:
@@ -112,11 +129,13 @@ async def on_voice_state_update(member, before, after):
             oTime = datetime.fromtimestamp(float(oFile.read()))
             if oTime > datetime.now():
                 print(f"ERROR: Bot offline at join time\nUSER(s) AFFECTED: {mbr}")
+                await bjoerkChannel.send(f"ERROR: Bot offline at join time\nUSER(s) AFFECTED: {mbr}")
+                await brianChannel.send(f"ERROR: Bot offline at join time\nUSER(s) AFFECTED: {mbr}")
                 return
 
         print(f'({mbr}) Has Left Channel: ({before.channel.name}) On Server: ({member.guild}) At: ({timeNow})')
-        await bjoerkChannel.send(f'"{member}" Has Left Channel: "{before.channel.name}" On Server: "{member.guild}" At: {timeNow}')
-        await brianChannel.send(f'"{member}" Has Left Channel: "{before.channel.name}" On Server: "{member.guild}" At: {timeNow}')
+        await bjoerkChannel.send(f'"{member}" Has Left Channel: "{before.channel.name}" On Server: "{member.guild}" At: {sysHelper.timeConverter(datetime.timestamp(datetime.now()))[-1]}')
+        await brianChannel.send(f'"{member}" Has Left Channel: "{before.channel.name}" On Server: "{member.guild}" At: {sysHelper.timeConverter(datetime.timestamp(datetime.now()))[-1]}')
         
 
         with open(f"{msrPath}/{mbr}/"+'TempDat.txt', 'r') as tmpDat:

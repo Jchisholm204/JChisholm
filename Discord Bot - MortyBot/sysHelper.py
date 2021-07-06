@@ -77,7 +77,7 @@ def monthConverter(monthNumber):
     elif monthNumber == 12:
         return "December"
     else:
-        return "ERROR: Unknown Month"
+        return "{ERROR: Unknown Month}"
 
 
 def timeConverter(timestamp):
@@ -128,3 +128,5 @@ def rankCheck(member):
     if rank == None:
         return "ERROR: Rank could not be determined"
     return rank, usrTimes[rank-1]
+
+#print("yeet skeet and", monthConverter(13),"my meat")

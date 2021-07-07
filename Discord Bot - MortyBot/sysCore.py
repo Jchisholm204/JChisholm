@@ -18,10 +18,14 @@ import discord
 from scoreBoard import scoreboard as timeSorter
 import sysHelper
 import zipfile
+import scrambler
 
-load_dotenv()
+CrypticToken = scrambler.load_token()
 
-TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = scrambler.parse(CrypticToken)
+
+#load_dotenv()
+#TOKEN = os.getenv("DISCORD_TOKEN")
 
 client = commands.Bot(command_prefix='#')
 

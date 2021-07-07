@@ -92,7 +92,7 @@ def timeConverter(timestamp):
         pam = "pm"
 
     oString = f"{monthConverter(month)} {day}, {hour}:{minute}{pam}"
-    return [monthConverter(month), day, hour, minute, pam, oString]
+    return [monthConverter(month), month, day, hour, minute, pam, oString]
 
 def inList(arr, item):
     for i in range(0,len(arr)):
@@ -124,9 +124,11 @@ def scoreSorter():
 
 def rankCheck(member):
     usrNames, usrTimes = scoreSorter()
-    rank = inList(usrNames, member) + 1
-    if rank == None:
+    rank = inList(usrNames, member)
+    if rank is not None:
+        rank +=1
+    elif rank == None:
         return "ERROR: Rank could not be determined"
-    return rank, usrTimes[rank-1]
+    return rank
 
 #print("yeet skeet and", monthConverter(13),"my meat")

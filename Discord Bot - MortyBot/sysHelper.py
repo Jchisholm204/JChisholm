@@ -16,10 +16,10 @@ import random
 def get_CurrentTime(ctx, member):
     wkdir = os.getcwd()
     if member is None:
-        usrDir = f"{wkdir}/{ctx.author.discriminator}/"
+        usrDir = f"{wkdir}/UserData/{ctx.author.discriminator}/"
         usrName = 'Your'
     else:
-        usrDir = f"{wkdir}/{member}/"
+        usrDir = f"{wkdir}/UserData/{member}/"
         usrName = f"{member}'s"
     usrDir_exists = os.path.exists(usrDir)
 

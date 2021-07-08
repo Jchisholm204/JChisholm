@@ -76,6 +76,9 @@ async def user_authorization(ctx, newOP=None):
 @client.command(name='req')
 async def dataDump(ctx, request=None):
     if request == None:
+        await ctx.channel.send("Please Make A Request:\nu -- User Data Files\ns -- Full Scoreboard.csv")
+    elif request == 'u':
+        await ctx.channel.send("REQ RECIEVED:\nAll User Data\nZipping Data...\tPlease Wait..")
         wkdir = os.getcwd()
         zf = zipfile.ZipFile(f"{os.getcwd()}/sysData/Requests/UserData.zip", "w")
         for dirname, subdirs, files in os.walk(f"{os.getcwd()}/UserData"):
@@ -84,6 +87,9 @@ async def dataDump(ctx, request=None):
                 zf.write(os.path.join(dirname, filename))
         zf.close()
         await ctx.channel.send(file=discord.File(f"{os.getcwd()}/sysData/Requests/UserData.zip"))
+    elif request == 's':
+        await ctx.channel.send("REQ RECIEVED:\nScoreboard.csv Data")
+        await ctx.channel.send(file=discord.File(f"{os.getcwd()}/sysData/ScoreBoard.csv"))
     else:
         await ctx.channel.send("ERROR: Unknown file request (0x00)")
 

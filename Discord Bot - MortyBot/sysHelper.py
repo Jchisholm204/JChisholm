@@ -90,6 +90,10 @@ def timeConverter(timestamp):
     if hour > 12:
         hour -= 12
         pam = "pm"
+    if hour == 0:
+        hour = '12'
+    if minute < 10:
+        minute = '0' + str(minute)
 
     oString = f"{monthConverter(month)} {day}, {hour}:{minute}{pam}"
     return [monthConverter(month), month, day, hour, minute, pam, oString]
@@ -131,4 +135,6 @@ def rankCheck(member):
         return "ERROR: Rank could not be determined"
     return rank
 
+
+#print(timeConverter(datetime.timestamp(datetime.now()))[-1]) -44000
 #print("yeet skeet and", monthConverter(13),"my meat")

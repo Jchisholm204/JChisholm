@@ -40,12 +40,23 @@ async def on_ready():
     
     startupPath = f"{os.getcwd()}/SysData/guilds.csv"
 
-    for guild in client.guilds:
-        print(f"{guild.name}(id: {guild.id})")
-    
     with open(startupPath, "w") as writeable:
         startupCSV = csv.writer(writeable)
-        startupCSV.writerow(client.guilds)
+        for guild in client.guilds:
+            print(f"{guild.name}(id: {guild.id})")
+            startupCSV.writerow([guild.name, guild.id])
+    
+    if (os.path.exists(f"{os.getcwd()}/SysData/startup.txt")):
+        startup_fp = open(f"{os.getcwd()}/SysData/startup.txt", "r")
+        startup_msg = startup_fp.read()
+        for guild in client.guilds:
+            for channel in guild.text_channels:
+                try:
+                    await channel.send(startup_msg)
+                except Exception:
+                    continue
+                else:
+                    break
 
 @client.command(name='99')
 async def testResponce(message):

@@ -986,7 +986,17 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { -31, -11, -4.9 } //Should work with the housing all the way down
+#define NOZZLE_TO_PROBE_OFFSET { -31, -11, -5.25 }
+/* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      WARNING:
+  Changing these values will not replace the values stored in the EEPROM
+  In order for these values to be changed properly;
+    The EEPROM must be cleared prior to uploading
+      OR
+    The values can be changed temporarily with M851
+      OR
+    The values must be changed with the OctoPrint EEPROM editor plugin
+*/
 
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
